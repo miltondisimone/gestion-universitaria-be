@@ -12,7 +12,7 @@ exports.login = (req, res) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
-                message: 'Error al buscar usuario',
+                message: 'Error searching users',
                 errors: err
             });
         }
