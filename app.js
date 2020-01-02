@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 // Import routes
 const appRoute = require('./routes/app.route');
 const userRoute = require('./routes/user.route');
+const loginRoute = require('./routes/login.route');
 
 
 
@@ -29,6 +30,7 @@ moongoose.connection.openUri('mongodb://localhost:27017/gestionUniversitariaDB',
 //Routes
 
 app.use('/user', userRoute);
+app.use('/login', loginRoute);
 app.use('/', appRoute);
 
 
