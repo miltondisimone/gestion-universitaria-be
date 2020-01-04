@@ -55,8 +55,8 @@ exports.createUser = (req, res) => {
 };
 
 exports.updateUser = (req, res) => {
-    var id = req.params.id;
-    var body = req.body;
+    const id = req.params.id;
+    const body = req.body;
 
     User.findById(id, (err, dbUser) => {
 

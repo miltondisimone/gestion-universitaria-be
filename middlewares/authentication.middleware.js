@@ -1,6 +1,6 @@
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-var SEED = require('../config/config').SEED;
+const SEED = require('../config/config').SEED;
 
 
 // ===============================
@@ -8,7 +8,7 @@ var SEED = require('../config/config').SEED;
 // ===============================
 exports.tokenVerify = (req, res, next) => {
 
-    var token = req.query.token;
+    const token = req.query.token;
 
     jwt.verify(token, SEED, (err, decoded) => {
 
@@ -26,4 +26,14 @@ exports.tokenVerify = (req, res, next) => {
 
     });
 
+};
+
+exports.adminVerify = (req, res, next) => {
+    if (req.user.role !== 'ADMIN_ROLE') {
+        return res.status(401).json({
+            ok: false,
+            mensaje: 'Unauthorized',
+        });
+    }
+    next();
 };
