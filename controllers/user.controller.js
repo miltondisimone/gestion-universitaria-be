@@ -1,6 +1,8 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 
+const fs = require('fs');
+
 
 exports.getAllUsers = (req, res, next) => {
 
@@ -128,4 +130,96 @@ exports.deleteUser = (req, res) => {
         });
 
     });
+};
+
+exports.uploadUser = (req, res) => {
+
+    const id = req.params.id;
+
+    if (!req.files) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'No seleccione ningun archivo',
+            errors: { message: 'Seleccione una imagen' },
+        });
+    }
+
+    // Obtener nombre del archivo
+    const file = req.files.image;
+    const cutName = file.name.split('.');
+    const fileExtension = cutName[cutName.length - 1];
+
+    // Extensiones validas
+    const validExtensions = ['png', 'jpg', 'gif', 'jpeg'];
+
+    if (validExtensions.indexOf(fileExtension) < 0) {
+
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'Invalid extension',
+            errors: { message: 'Valid extensions: ' + validExtensions.join(', ') }
+        });
+
+    }
+
+    // Custom file name
+    const fileName = `${id}-${new Date().getMilliseconds()}.${fileExtension}`;
+
+    // Mover el archivo a un path
+    const path = `./upload/user/${fileName}`;
+
+    file.mv(path, err => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error moving file',
+                errors: err
+            });
+        }
+
+        User.findById(id, (err, user) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error findin users',
+                    errors: err
+                });
+            }
+
+            if (!user) {
+                return res.status(422).json({
+                    ok: false,
+                    mensaje: 'There is no Users with that ID',
+                    errors: err
+                });
+            }
+
+            const oldPath = './upload/user/' + user.img;
+
+            // Delete old image if exists
+            if (fs.existsSync(oldPath)) {
+                fs.unlink(oldPath, (err) => {
+                    if (err) {
+                        return res.status(400).json({
+                            ok: false,
+                            message: 'Error deleting old image',
+                            errors: err,
+                        });
+                    }
+                });
+            }
+
+            user.img = fileName;
+
+            user.save((err, updatedUser) => {
+                return res.status(200).json({
+                    ok: true,
+                    mensaje: 'User image updated',
+                    updatedUser
+                });
+            });
+        });
+    });
+
 };
