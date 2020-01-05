@@ -55,6 +55,7 @@ exports.createUser = (req, res) => {
 };
 
 exports.updateUser = (req, res) => {
+
     const id = req.params.id;
     const body = req.body;
 

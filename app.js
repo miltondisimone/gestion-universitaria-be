@@ -28,6 +28,7 @@ const loginRoute = require('./routes/login.route');
 const userRoute = require('./routes/user.route');
 const subjectRoute = require('./routes/subject.route');
 const studentRoute = require('./routes/student.route');
+const teacherReoute = require('./routes/teacher.route');
 
 
 
@@ -45,6 +46,7 @@ app.use('/user', userRoute);
 app.use('/login', loginRoute);
 app.use('/subject', subjectRoute);
 app.use('/student', studentRoute);
+app.use('/teacher', teacherReoute);
 app.use('/', appRoute);
 
 

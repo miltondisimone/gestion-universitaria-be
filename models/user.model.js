@@ -8,6 +8,11 @@ const validRols = {
     message: '{VALUE} is not a valida rol'
 };
 
+const userOptions = {
+    discriminatorKey: 'usertype',
+    collection: 'users',
+};
+
 const userSchema = new Schema({
 
     name: { type: String, required: [true, 'Name is required'] },
@@ -17,7 +22,7 @@ const userSchema = new Schema({
     role: { type: String, required: true, default: 'USER_ROLE', enum: validRols },
     google: { type: Boolean, default: false }
 
-});
+}, userOptions);
 
 userSchema.plugin(uniqueValidator, { message: '{PATH} must be unique' });
 

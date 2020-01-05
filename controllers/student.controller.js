@@ -32,7 +32,7 @@ exports.createStudent = (req, res) => {
 
     body = req.body;
 
-    const user = new User({
+    const student = new Student({
         name: body.name,
         email: body.email,
         password: bcrypt.hashSync(body.password, 10),
@@ -40,34 +40,47 @@ exports.createStudent = (req, res) => {
         role: body.role
     });
 
-    user.save((err, savedUser) => {
+    student.save((err, savedStudent) => {
 
         if (err) {
             return res.status(500).json({
                 ok: false,
-                message: 'Error creating user',
+                message: 'Error creating student',
                 errors: err
             });
         }
 
-        const student = new Student({ user: savedUser.id });
-
-        student.save((err, savedStudent) => {
-            if (err) {
-                res.status(400).json({
-                    ok: false,
-                    message: 'error',
-                    errors: err,
-                });
-            }
-
-            res.status(200).json({
-                ok: true,
-                message: 'Student created successfully',
-                savedStudent
-            });
+        res.status(200).json({
+            ok: true,
+            message: 'Student created successfully',
+            savedStudent
         });
 
+
+    });
+
+};
+
+exports.updateStudent = (req, res) => {
+
+    const id = req.params.id;
+    const body = req.body;
+
+    Student.findByIdAndUpdate(id, body, { new: true }, (err, updatedStudent) => {
+
+        if (err) {
+            res.status(400).json({
+                ok: false,
+                message: 'There is no Student with that ID',
+                errors: err,
+            });
+        }
+
+        res.status(200).json({
+            ok: true,
+            message: 'Student Updated',
+            updatedStudent
+        });
 
     });
 
@@ -95,34 +108,11 @@ exports.deleteStudent = (req, res) => {
             });
         }
 
-        User.findByIdAndDelete(deletedStudent.user, (err, deletedUser) => {
-
-            deletedUser.password = '';
-
-            if (err) {
-                res.status(500).json({
-                    ok: false,
-                    message: 'Error when try to find User',
-                    errors: err,
-                });
-            }
-
-            if (!deletedUser) {
-                res.status(400).json({
-                    ok: false,
-                    message: 'There is no Users with that ID',
-                    errors: err,
-                });
-            }
-
-            res.status(200).json({
-                ok: true,
-                message: 'Student successfully deleted',
-                deletedUser
-            });
-
+        res.status(200).json({
+            ok: true,
+            message: 'Student successfully deleted',
+            deletedStudent
         });
-
 
 
     });
